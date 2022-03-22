@@ -11,11 +11,8 @@ utilizado: programação orientada a objetos, estrutura de dados, arquivos csv
 - Backup (em construção)
 
 
-### CRUD
-create, read, update, delete
+### Ações
 
 - adicionar
 - listar
-- editar
-- excluir
 - pesquisar
