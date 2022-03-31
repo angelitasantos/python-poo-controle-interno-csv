@@ -3,7 +3,7 @@ from classInterface import *
 from classArquivos import *
 from classProdutos import *
 from classClientes import *
-import csv  # - CSV -> Comma Separated Values
+import csv
 
 
 class Vendas:
@@ -24,10 +24,9 @@ class Vendas:
         else:
             Interface.apresentar_cabecalho_interno(self, 'PEDIDOS DE VENDA')
             leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
-            tabela = []
-
-            for linha in leitor:
-                tabela.append(linha)
+            
+            lista = list(leitor)
+            lista_ordenada = sorted (lista[1:], key = lambda dado: str(dado[1]))
 
             print(f'{bgCor[4]}{tabela[0][0]:<15}{tabela[0][2]:<30}{tabela[0][7]:<30}{tabela[0][9]:<10}{tabela[0][10]:<15}{bgCor[0]}')
             print(Interface.incrementar_linha(self, tamanho, '~'))
@@ -55,10 +54,9 @@ class Vendas:
                 escritor = csv.writer(arquivo, delimiter=',', lineterminator='\n')
                 Interface.apresentar_cabecalho_interno(self, 'CADASTRAR UMA NOVA VENDA')
 
-                # validar se já existe o identificador gerado
-                numero = str(Validacoes.gerar_identificador(self))
-
+                numero = int(Validacoes.gerar_id_sequencial(self, arquivo_vendas))
                 print()
+
                 lista_clientes = Clientes.buscar_cliente(self, arquivo_clientes)
                 if lista_clientes != None:
                     cod_cliente = lista_clientes[0]
@@ -68,21 +66,30 @@ class Vendas:
                     canal_venda_cliente = lista_clientes[4]
                     print(f'{nome_cliente}-{cidade_cliente}/{estado_cliente}')
 
-                lista_produtos = Produtos.buscar_produto(self, arquivo_produtos)
-                if lista_produtos != None:
-                    cod_produto = lista_produtos[0]
-                    nome_produto = lista_produtos[1]
-                    categoria_produto = lista_produtos[2]
+                resposta = str(input(f'\nQuer consultar o código do produto? [S/N] '))
+                if resposta == 'S' or resposta == 's':
+                    Produtos.buscar_produto_descricao(self, arquivo_produtos)      
+
+                busca_produto = Produtos.buscar_produto(self, arquivo_produtos)
+
+                while busca_produto == None:
+                    print(f'\n{fontCor[1]}Você não digitou um código válido.{fontCor[0]}')
+                    busca_produto = Produtos.buscar_produto(self, arquivo_produtos)
+
+                if busca_produto != None:
+                    cod_produto = busca_produto[0]
+                    nome_produto = busca_produto[1]
+                    categoria_produto = busca_produto[2]
                     qtde = Validacoes.validar_numero_real(self, f'{"Digite a quantidade ":.<25} ')
-                    preco_produto = lista_produtos[3]
-                    preco = Validacoes.formatar_valor_real(float((lista_produtos[3])))
+                    preco_produto = busca_produto[3]
+                    preco = Validacoes.formatar_valor_real(float((busca_produto[3])))
                     print(f'{nome_produto}-{categoria_produto} Preço unitário: R$ {preco}')
 
-                vendas = [
+                tabela = [
                     numero, cod_cliente, nome_cliente, cidade_cliente, estado_cliente, canal_venda_cliente,
                     cod_produto, nome_produto, categoria_produto, qtde, preco_produto]
 
-                escritor.writerow(vendas)
+                escritor.writerow(tabela)
             except:
                 print(f'\n{bgCor[1]}ERRO! Ocorreu um erro ao incluir os dados.{bgCor[0]}\n')
             else:

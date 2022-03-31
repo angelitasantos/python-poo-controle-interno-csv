@@ -23,10 +23,9 @@ class ContasReceber:
         else:
             Interface.apresentar_cabecalho_interno(self, 'CONTAS A RECEBER')
             leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
-            tabela = []
-
-            for linha in leitor:
-                tabela.append(linha)
+            
+            lista = list(leitor)
+            lista_ordenada = sorted (lista[1:], key = lambda dado: str(dado[1]))
 
             print(f'{bgCor[4]}{tabela[0][0]:<15}{tabela[0][2]:<35}{tabela[0][6]:<10}{tabela[0][7]:<15}{tabela[0][8]:<11}{tabela[0][10]:<14}{bgCor[0]}')
             print(Interface.incrementar_linha(self, tamanho, '~'))

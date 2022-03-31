@@ -149,7 +149,8 @@ class Menu:
     def gerar_menu_produtos(self):
 
         while True:
-            resposta = Interface.apresentar_menu_principal(self, lista_submenu, 'MENU PRODUTOS')
+            submenu = 'MENU PRODUTOS'
+            resposta = Interface.apresentar_menu_principal(self, lista_submenu, submenu)
 
             if resposta == 1:
                 sleep(1)
@@ -163,7 +164,8 @@ class Menu:
 
             elif resposta == 3:
                 sleep(1)
-                lista = Produtos.buscar_produto(self, arquivo_produtos)
+                lista = Produtos.buscar_produto_descricao(self, arquivo_produtos)
+                '''
                 if lista != None:
                     print()
                     print(f'{"id ":.<15} {lista[0]}')
@@ -172,7 +174,7 @@ class Menu:
                     preco = Validacoes.formatar_valor_real(float((lista[3])))
                     print(f'{"preço ":.<15} R$ {preco}')
                     print()
-
+                '''
 
             elif resposta == 4:
                 print(f'{fontCor[1]}\nVoltando ao menu principal ...\n{fontCor[0]}')
@@ -187,6 +189,7 @@ class Menu:
     def gerar_menu_clientes(self):
 
         while True:
+            submenu = 'MENU PRODUTOS'
             resposta = Interface.apresentar_menu_principal(self, lista_submenu, 'MENU CLIENTES')
 
             if resposta == 1:
@@ -444,4 +447,3 @@ class Menu:
 
             else:
                 print(f'{bgCor[1]}ERRO: Por favor, digite uma opção válida!{bgCor[0]}')
-

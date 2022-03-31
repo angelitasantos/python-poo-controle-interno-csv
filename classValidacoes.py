@@ -1,4 +1,5 @@
 import random
+import csv
 
 
 bgCor = (
@@ -80,14 +81,40 @@ class Validacoes:
         all = lower + upper + digits
         id = "".join(random.sample(all, length))
         return id
+    
+
+    def gerar_id_sequencial(self, nome):
+        try:
+            arquivo = open(nome, 'r')
+        except:
+            print(f'\n{bgCor[1]}ERRO! Confira se o arquivo existe.{bgCor[0]}\n')
+        else:
+            leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
+            tabela = []
+
+            for linha in leitor:
+                tabela.append(linha)
+
+            if len(tabela) == 1:
+                id = 1
+            elif tabela[-1] != 1:
+                novo_id = int(tabela[-1][0])
+                id = novo_id + 1
+            return id
+                
+        finally:
+            arquivo.close()
 
 
-    ''' # criar um método para validar se o campo está vazio
-    def validar_campo_vazio(self, mensagem=''):
-        return validar
-    '''
+    def validar_campo_vazio(self, campo):
+        if campo == "":
+            return True
+        else:
+            return False
+
  
-    ''' # criar um método para validar o tamanho dos campos
-    def validar_tamanho_campo(self, mensagem=''):
-        return validar    
-    '''
+    def validar_tamanho_campo(self, tamanho_input, tamanho_campo):
+        if tamanho_input >= tamanho_campo:
+            return True
+        else:
+            return False

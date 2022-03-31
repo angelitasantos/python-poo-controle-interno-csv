@@ -3,7 +3,7 @@ from classInterface import *
 from classArquivos import *
 from classProdutos import *
 from classFornecedores import *
-import csv  # - CSV -> Comma Separated Values
+import csv
 
 
 class Compras:
@@ -25,10 +25,9 @@ class Compras:
         else:
             Interface.apresentar_cabecalho_interno(self, 'PEDIDOS DE COMPRA')
             leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
-            tabela = []
-
-            for linha in leitor:
-                tabela.append(linha)
+            
+            lista = list(leitor)
+            lista_ordenada = sorted (lista[1:], key = lambda dado: str(dado[1]))
 
             print(f'{bgCor[4]}{tabela[0][0]:<15}{tabela[0][2]:<30}{tabela[0][7]:<30}{tabela[0][9]:<10}{tabela[0][10]:<15}{bgCor[0]}')
             print(Interface.incrementar_linha(self, tamanho, '~'))
@@ -56,10 +55,9 @@ class Compras:
                 escritor = csv.writer(arquivo, delimiter=',', lineterminator='\n')
                 Interface.apresentar_cabecalho_interno(self, 'CADASTRAR UMA NOVA COMPRA')
 
-                # validar se já existe o identificador gerado
-                numero = str(Validacoes.gerar_identificador(self))
-
+                numero = int(Validacoes.gerar_id_sequencial(self, arquivo_compras))
                 print()
+                
                 lista_fornecedores = Fornecedores.buscar_fornecedor(self, arquivo_fornecedores)
                 if lista_fornecedores != None:
                     cod_fornecedor = lista_fornecedores[0]
@@ -67,7 +65,7 @@ class Compras:
                     cidade_fornecedor = lista_fornecedores[2]
                     estado_fornecedor = lista_fornecedores[3]
                     tipo_fornecedor = lista_fornecedores[4]
-                    print(f'{nome_fornecedor}-{cidade_fornecedor}/{estado_fornecedor}')
+                    print(f'{nome_fornecedor}---{cidade_fornecedor}/{estado_fornecedor}')
 
                 lista_produtos = Produtos.buscar_produto(self, arquivo_produtos)
                 if lista_produtos != None:
@@ -77,13 +75,13 @@ class Compras:
                     qtde = Validacoes.validar_numero_real(self, f'{"Digite a quantidade ":.<25} ')
                     preco_produto = Validacoes.validar_numero_real(self, f'{"Digite o preço ":.<25} ')
                     preco = Validacoes.formatar_valor_real(float((preco_produto)))
-                    print(f'{nome_produto}-{categoria_produto} Preço unitário: R$ {preco}')
+                    print(f'{nome_produto}---{categoria_produto} Preço unitário: R$ {preco}')
 
-                compras = [
+                tabela = [
                     numero, cod_fornecedor, nome_fornecedor, cidade_fornecedor, estado_fornecedor, tipo_fornecedor,
                     cod_produto, nome_produto, categoria_produto, qtde, preco_produto]
 
-                escritor.writerow(compras)
+                escritor.writerow(tabela)
             except:
                 print(f'\n{bgCor[1]}ERRO! Ocorreu um erro ao incluir os dados.{bgCor[0]}\n')
             else:
