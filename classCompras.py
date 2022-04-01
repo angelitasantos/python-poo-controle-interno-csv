@@ -27,17 +27,17 @@ class Compras:
             leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
             
             lista = list(leitor)
-            lista_ordenada = sorted (lista[1:], key = lambda dado: str(dado[1]))
+            lista_ordenada = sorted (lista[1:], key = lambda dado: int(dado[0]))
 
-            print(f'{bgCor[4]}{tabela[0][0]:<15}{tabela[0][2]:<30}{tabela[0][7]:<30}{tabela[0][9]:<10}{tabela[0][10]:<15}{bgCor[0]}')
+            print(f'{bgCor[4]}{lista[0][0]:<14} {lista[0][2]:<30}{lista[0][7]:<30}{lista[0][9]:<10}{lista[0][10]:<15}{bgCor[0]}')
             print(Interface.incrementar_linha(self, tamanho, '~'))
 
-            if len(tabela) != 1:
-                for linha in tabela[1:]:
+            if len(lista) != 1:
+                for linha in lista_ordenada:
                     qtde = Validacoes.formatar_quantidade(float((linha[9])))
                     total = float((linha[9])) * float((linha[10]))
                     valor = Validacoes.formatar_valor_real(total)
-                    print(f'{linha[0]:<15}{linha[2]:<30}{linha[7]:<30}{qtde:>9} R$ {valor:.>11}')
+                    print(f'{linha[0]:>14} {linha[2]:<30}{linha[7]:<30}{qtde:>9} R$ {valor:.>11}')
                 print(Interface.incrementar_linha(self, tamanho, '~'))
             else:
                 print(f'\n{fontCor[1]}Não existe nenhum compra registrada no sistema.\n{fontCor[0]}')
@@ -56,30 +56,48 @@ class Compras:
                 Interface.apresentar_cabecalho_interno(self, 'CADASTRAR UMA NOVA COMPRA')
 
                 numero = int(Validacoes.gerar_id_sequencial(self, arquivo_compras))
-                print()
                 
-                lista_fornecedores = Fornecedores.buscar_fornecedor(self, arquivo_fornecedores)
-                if lista_fornecedores != None:
-                    cod_fornecedor = lista_fornecedores[0]
-                    nome_fornecedor = lista_fornecedores[1]
-                    cidade_fornecedor = lista_fornecedores[2]
-                    estado_fornecedor = lista_fornecedores[3]
-                    tipo_fornecedor = lista_fornecedores[4]
-                    print(f'{nome_fornecedor}---{cidade_fornecedor}/{estado_fornecedor}')
+                resposta = str(input(f'\nQuer consultar o código do fornecedor? [S/N] '))
+                if resposta == 'S' or resposta == 's':
+                    Fornecedores.buscar_fornecedor_nome(self, arquivo_fornecedores)
 
-                lista_produtos = Produtos.buscar_produto(self, arquivo_produtos)
-                if lista_produtos != None:
-                    cod_produto = lista_produtos[0]
-                    nome_produto = lista_produtos[1]
-                    categoria_produto = lista_produtos[2]
-                    qtde = Validacoes.validar_numero_real(self, f'{"Digite a quantidade ":.<25} ')
-                    preco_produto = Validacoes.validar_numero_real(self, f'{"Digite o preço ":.<25} ')
-                    preco = Validacoes.formatar_valor_real(float((preco_produto)))
-                    print(f'{nome_produto}---{categoria_produto} Preço unitário: R$ {preco}')
+                busca_contato = Fornecedores.buscar_fornecedor(self, arquivo_fornecedores)
+
+                while busca_contato == None:
+                    print(f'\n{fontCor[1]}Você não digitou um código válido.{fontCor[0]}')
+                    busca_contato = Fornecedores.buscar_fornecedor(self, arquivo_fornecedores)
+
+                if busca_contato != None:
+                    codigo_contato = busca_contato[0]
+                    nome_contato = busca_contato[1]
+                    cidade = busca_contato[2]
+                    estado = busca_contato[3]
+                    tipo_fornecedor = busca_contato[4]
+                    print(f'Fornecedor: {nome_contato} --- {cidade}/{estado}')
+
+                resposta = str(input(f'\nQuer consultar o código do produto? [S/N] '))
+                if resposta == 'S' or resposta == 's':
+                    Produtos.buscar_produto_descricao(self, arquivo_produtos)      
+
+                busca_produto = Produtos.buscar_produto(self, arquivo_produtos)
+
+                while busca_produto == None:
+                    print(f'\n{fontCor[1]}Você não digitou um código válido.{fontCor[0]}')
+                    busca_produto = Produtos.buscar_produto(self, arquivo_produtos)
+
+                preco_unitario = Validacoes.formatar_valor_real(float((busca_produto[3])))
+                print(f'Descrição: {busca_produto[1]} --- Preço unitário: R$ {preco_unitario}\n')
+
+                if busca_produto != None:
+                    cod_produto = busca_produto[0]
+                    nome_produto = busca_produto[1]
+                    categoria_produto = busca_produto[2]
+                    qtde = Validacoes.digitar_quantidade(self)
+                    preco = Validacoes.digitar_numero_real(self)
 
                 tabela = [
-                    numero, cod_fornecedor, nome_fornecedor, cidade_fornecedor, estado_fornecedor, tipo_fornecedor,
-                    cod_produto, nome_produto, categoria_produto, qtde, preco_produto]
+                    numero, codigo_contato, nome_contato, cidade, estado, tipo_fornecedor,
+                    cod_produto, nome_produto, categoria_produto, qtde, preco]
 
                 escritor.writerow(tabela)
             except:
@@ -96,20 +114,92 @@ class Compras:
             print(f'\n{bgCor[1]}ERRO! Confira se o arquivo existe.{bgCor[0]}\n')
         else:
             leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
+            
             tabela = []
-
             for linha in leitor:
                 tabela.append(linha)
 
             if len(tabela) == 1:
                 print(f'\n{fontCor[1]}Não existe nenhum compra registrada no sistema.\n{fontCor[0]}')
             elif len(tabela) != 1:
-                Interface.apresentar_cabecalho_interno(self, 'PESQUISAR COMPRA')
-                numero_compra = str(input(f'{"Digite o número ":.<25} '))
+                numero = str(input(f'\n{"Digite o número da compra ":.<35} '))
                 for linha in tabela: 
-                    if linha[0] == numero_compra:
+                    if linha[0] == numero:
                         return [linha[0], linha[1], linha[2], linha[3], linha[4], linha[5], linha[6], linha[7], linha[8], linha[9], linha[10]]
-                else:
-                    print(f'\n{fontCor[1]}Não existe nenhum compra registrada no sistema.\n{fontCor[0]}')
         finally:
             arquivo.close()
+
+    
+    def buscar_compras_fornecedor(self, nome):
+        try:
+            arquivo = open(nome, 'r')
+        except:
+            print(f'\n{bgCor[1]}ERRO! Confira se o arquivo existe.{bgCor[0]}\n')
+        else:
+            leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
+            
+            lista = list(leitor)
+            lista_ordenada = sorted (lista[1:], key = lambda dado: str(dado[2]))
+
+            if len(lista) == 1:
+                print(f'\n{fontCor[1]}Não existe nenhum produto cadastrado no sistema.\n{fontCor[0]}')
+            elif len(lista) != 1:
+                Interface.apresentar_cabecalho_interno(self, 'PESQUISAR COMPRAS POR FORNECEDOR')
+
+                descricao = str(input(f'\n{"Digite o nome do fornecedor ":.<35} ')).strip().upper()
+                palavra = descricao
+                print(f'\n{bgCor[4]}{lista[0][0]:<14} {lista[0][2]:<30}{lista[0][7]:<30}{lista[0][9]:<10}{lista[0][10]:<15}{bgCor[0]}')
+                print(Interface.incrementar_linha(self, tamanho, '~'))
+
+                for linha in lista_ordenada: 
+                    if palavra in linha[2] and linha[0] != 'NUMERO':
+                        qtde = Validacoes.formatar_quantidade(float((linha[9])))
+                        total = float((linha[9])) * float((linha[10]))
+                        valor = Validacoes.formatar_valor_real(total)
+                        print(f'{linha[0]:>14} {linha[2]:<30}{linha[7]:<30}{qtde:>9} R$ {valor:.>11}')
+                print(Interface.incrementar_linha(self, tamanho, '~'))
+        finally:
+            arquivo.close()
+
+
+    def buscar_compras_produto(self, nome):
+        try:
+            arquivo = open(nome, 'r')
+        except:
+            print(f'\n{bgCor[1]}ERRO! Confira se o arquivo existe.{bgCor[0]}\n')
+        else:
+            leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
+            
+            lista = list(leitor)
+            lista_ordenada = sorted (lista[1:], key = lambda dado: str(dado[2]))
+
+            if len(lista) == 1:
+                print(f'\n{fontCor[1]}Não existe nenhum produto cadastrado no sistema.\n{fontCor[0]}')
+            elif len(lista) != 1:
+                Interface.apresentar_cabecalho_interno(self, 'PESQUISAR COMPRAS POR PRODUTO')
+
+                descricao = str(input(f'\n{"Digite a descrição do produto ":.<35} ')).strip().upper()
+                palavra = descricao
+                print(f'\n{bgCor[4]}{lista[0][0]:<14} {lista[0][2]:<30}{lista[0][7]:<30}{lista[0][9]:<10}{lista[0][10]:<15}{bgCor[0]}')
+                print(Interface.incrementar_linha(self, tamanho, '~'))
+
+                for linha in lista_ordenada: 
+                    if palavra in linha[7] and linha[0] != 'NUMERO':
+                        qtde = Validacoes.formatar_quantidade(float((linha[9])))
+                        total = float((linha[9])) * float((linha[10]))
+                        valor = Validacoes.formatar_valor_real(total)
+                        print(f'{linha[0]:>14} {linha[2]:<30}{linha[7]:<30}{qtde:>9} R$ {valor:.>11}')
+                print(Interface.incrementar_linha(self, tamanho, '~'))
+        finally:
+            arquivo.close()
+
+
+'''
+self = 'self'
+Compras.ler_arquivo_compras(self, arquivo_compras)
+busca = Compras.buscar_compras(self, arquivo_compras)
+print(busca)
+Compras.buscar_compras_fornecedor(self, arquivo_compras)
+Compras.cadastrar_compras(self, arquivo_compras)
+Compras.buscar_compras_produto(self, arquivo_compras)
+'''

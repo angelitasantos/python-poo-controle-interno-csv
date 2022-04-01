@@ -81,20 +81,86 @@ class Fornecedores:
             print(f'\n{bgCor[1]}ERRO! Confira se o arquivo existe.{bgCor[0]}\n')
         else:
             leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
+            
             tabela = []
-
             for linha in leitor:
                 tabela.append(linha)
 
             if len(tabela) == 1:
                 print(f'\n{fontCor[1]}Não existe nenhum fornecedor cadastrado no sistema.\n{fontCor[0]}')
             elif len(tabela) != 1:
-                Interface.apresentar_cabecalho_interno(self, 'PESQUISAR FORNECEDOR')
-                codigo_fornecedor = str(input(f'{"Digite o código ":.<25} '))
+                codigo = str(input(f'\n{"Digite o código do fornecedor ":.<35} '))
                 for linha in tabela: 
-                    if linha[0] == codigo_fornecedor:
+                    if linha[0] == codigo:
                         return [linha[0], linha[1], linha[2], linha[3], linha[4]]
-                else:
-                    print(f'\n{fontCor[1]}Não existe nenhum fornecedor cadastrado no sistema.\n{fontCor[0]}')
         finally:
             arquivo.close()
+
+
+    def buscar_fornecedor_nome(self, nome):
+        try:
+            arquivo = open(nome, 'r')
+        except:
+            print(f'\n{bgCor[1]}ERRO! Confira se o arquivo existe.{bgCor[0]}\n')
+        else:
+            leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
+            
+            lista = list(leitor)
+            lista_ordenada = sorted (lista[1:], key = lambda dado: str(dado[1]))
+
+            if len(lista) == 1:
+                print(f'\n{fontCor[1]}Não existe nenhum fornecedor cadastrado no sistema.\n{fontCor[0]}')
+            elif len(lista) != 1:
+                Interface.apresentar_cabecalho_interno(self, 'PESQUISAR FORNECEDOR PELO NOME')
+
+                descricao = str(input(f'\n{"Digite o nome do fornecedor":.<35} ')).strip().upper()
+                palavra = descricao
+                print(f'\n{bgCor[4]}{lista[0][0]:<14} {lista[0][1]:<35}{lista[0][2]:<30}{lista[0][3]:<5}{lista[0][4]:<15}{bgCor[0]}')
+                print(Interface.incrementar_linha(self, tamanho, '~'))
+
+                for linha in lista_ordenada: 
+                    if palavra in linha[1] and linha[0] != 'ID':
+                        print(f'{linha[0]:>14} {linha[1]:<35}{linha[2]:<30}{linha[3]:<5}{linha[4]:<15}')
+                print(Interface.incrementar_linha(self, tamanho, '~'))
+        finally:
+            arquivo.close()
+
+
+    def buscar_fornecedor_tipo(self, nome):
+        try:
+            arquivo = open(nome, 'r')
+        except:
+            print(f'\n{bgCor[1]}ERRO! Confira se o arquivo existe.{bgCor[0]}\n')
+        else:
+            leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
+            
+            lista = list(leitor)
+            lista_ordenada = sorted (lista[1:], key = lambda dado: str(dado[1]))
+
+            if len(lista) == 1:
+                print(f'\n{fontCor[1]}Não existe nenhum fornecedor cadastrado no sistema.\n{fontCor[0]}')
+            elif len(lista) != 1:
+                Interface.apresentar_cabecalho_interno(self, 'PESQUISAR FORNECEDOR POR TIPO')
+
+                descricao = str(input(f'\n{"Digite o tipo de fornecedor ":.<35} ')).strip().upper()
+                palavra = descricao
+                print(f'\n{bgCor[4]}{lista[0][0]:<14} {lista[0][1]:<35}{lista[0][2]:<30}{lista[0][3]:<5}{lista[0][4]:<15}{bgCor[0]}')
+                print(Interface.incrementar_linha(self, tamanho, '~'))
+
+                for linha in lista_ordenada: 
+                    if palavra in linha[4] and linha[0] != 'ID':
+                        print(f'{linha[0]:>14} {linha[1]:<35}{linha[2]:<30}{linha[3]:<5}{linha[4]:<15}')
+                print(Interface.incrementar_linha(self, tamanho, '~'))
+        finally:
+            arquivo.close()
+
+
+'''
+self = 'self'
+Fornecedores.ler_arquivo_fornecedores(self, arquivo_fornecedores)
+busca = Fornecedores.buscar_fornecedor(self, arquivo_fornecedores)
+print(busca)
+Fornecedores.buscar_fornecedor_nome(self, arquivo_fornecedores)
+Fornecedores.cadastrar_fornecedores(self, arquivo_fornecedores)
+Fornecedores.buscar_fornecedor_tipo(self, arquivo_fornecedores)
+'''

@@ -62,7 +62,7 @@ class Produtos:
                 descricao = desc
                 
                 categoria = str(input(f'{"Digite a categoria ":.<25} ')).strip().upper()
-                preco = Validacoes.validar_numero_real(self, f'{"Digite o preço ":.<25} ')
+                preco = Validacoes.digitar_numero_real(self)
 
                 tabela = [id, descricao, categoria, preco]
                 escritor.writerow(tabela)
@@ -80,23 +80,21 @@ class Produtos:
             print(f'\n{bgCor[1]}ERRO! Confira se o arquivo existe.{bgCor[0]}\n')
         else:
             leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
+            
             tabela = []
-
             for linha in leitor:
                 tabela.append(linha)
 
             if len(tabela) == 1:
                 print(f'\n{fontCor[1]}Não existe nenhum produto cadastrado no sistema.\n{fontCor[0]}')
             elif len(tabela) != 1:
-                #Interface.apresentar_cabecalho_interno(self, 'PESQUISAR PRODUTO')
-                codigo_produto = str(input(f'\n{"Digite o código ":.<25} '))
+                codigo = str(input(f'\n{"Digite o código do produto":.<35} '))
                 for linha in tabela: 
-                    if linha[0] == codigo_produto:
+                    if linha[0] == codigo:
                         return [linha[0], linha[1], linha[2], linha[3]]
-            else:
-                print(f'\n{fontCor[1]}Não existe nenhum produto cadastrado no sistema.\n{fontCor[0]}')
         finally:
             arquivo.close()
+
 
     def buscar_produto_descricao(self, nome):
         try:
@@ -105,29 +103,65 @@ class Produtos:
             print(f'\n{bgCor[1]}ERRO! Confira se o arquivo existe.{bgCor[0]}\n')
         else:
             leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
-            tabela = []
+            
+            lista = list(leitor)
+            lista_ordenada = sorted (lista[1:], key = lambda dado: str(dado[1]))
 
-            for linha in leitor:
-                tabela.append(linha)
-
-            if len(tabela) == 1:
+            if len(lista) == 1:
                 print(f'\n{fontCor[1]}Não existe nenhum produto cadastrado no sistema.\n{fontCor[0]}')
-            elif len(tabela) != 1:
-                Interface.apresentar_cabecalho_interno(self, 'PESQUISAR PRODUTO')
+            elif len(lista) != 1:
+                Interface.apresentar_cabecalho_interno(self, 'PESQUISAR PRODUTO POR DESCRIÇÃO')
 
-                descricao = str(input(f'{"Digite a descrição ":.<25} ')).strip().upper()
+                descricao = str(input(f'\n{"Digite a descrição do produto":.<35} ')).strip().upper()
                 palavra = descricao
-                print()
-                print(f'{bgCor[4]}{tabela[0][0]:<14} {tabela[0][1]:<45}{tabela[0][2]:<25}{tabela[0][3]:<15}{bgCor[0]}')
+                print(f'\n{bgCor[4]}{lista[0][0]:<14} {lista[0][1]:<45}{lista[0][2]:<25}{lista[0][3]:<15}{bgCor[0]}')
                 print(Interface.incrementar_linha(self, tamanho, '~'))
 
-                for linha in tabela: 
+                for linha in lista_ordenada: 
                     if palavra in linha[1] and linha[0] != 'ID':
                         preco = Validacoes.formatar_valor_real(float((linha[3])))
                         print(f'{linha[0]:>14} {linha[1]:<45}{linha[2]:<25}R$ {preco:.>11}')
-                print()
                 print(Interface.incrementar_linha(self, tamanho, '~'))
-            else:
-                print(f'\n{fontCor[1]}Não existe nenhum produto cadastrado no sistema.\n{fontCor[0]}')
         finally:
             arquivo.close()
+
+
+    def buscar_produto_categoria(self, nome):
+        try:
+            arquivo = open(nome, 'r')
+        except:
+            print(f'\n{bgCor[1]}ERRO! Confira se o arquivo existe.{bgCor[0]}\n')
+        else:
+            leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
+            
+            lista = list(leitor)
+            lista_ordenada = sorted (lista[1:], key = lambda dado: str(dado[1]))
+
+            if len(lista) == 1:
+                print(f'\n{fontCor[1]}Não existe nenhum produto cadastrado no sistema.\n{fontCor[0]}')
+            elif len(lista) != 1:
+                Interface.apresentar_cabecalho_interno(self, 'PESQUISAR PRODUTO POR CATEGORIA')
+
+                descricao = str(input(f'\n{"Digite a categoria do produto":.<35} ')).strip().upper()
+                palavra = descricao
+                print(f'\n{bgCor[4]}{lista[0][0]:<14} {lista[0][1]:<45}{lista[0][2]:<25}{lista[0][3]:<15}{bgCor[0]}')
+                print(Interface.incrementar_linha(self, tamanho, '~'))
+
+                for linha in lista_ordenada:
+                    if palavra in linha[2] and linha[0] != 'ID':
+                        preco = Validacoes.formatar_valor_real(float((linha[3])))
+                        print(f'{linha[0]:>14} {linha[1]:<45}{linha[2]:<25}R$ {preco:.>11}')
+                print(Interface.incrementar_linha(self, tamanho, '~'))
+        finally:
+            arquivo.close()
+
+
+'''
+self = 'self'
+Produtos.ler_arquivo_produtos(self, arquivo_produtos)
+busca = Produtos.buscar_produto(self, arquivo_produtos)
+print(busca)
+Produtos.buscar_produto_descricao(self, arquivo_produtos)
+Produtos.cadastrar_produtos(self, arquivo_produtos)
+Produtos.buscar_produto_categoria(self, arquivo_produtos)
+'''
