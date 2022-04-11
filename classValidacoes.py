@@ -60,13 +60,13 @@ class Validacoes:
     def digitar_numero_real(self):
         while True:
             try:
-                valor_string = str(input(f'{"Digite o valor ":.<35} '))
+                valor_string = str(input(f'{"Digite o valor ":.<30} '))
             except (ValueError, TypeError):
                 print(f'{bgCor[1]}ERRO: Por favor, digite um valor real!{bgCor[0]}')
                 continue
             else:
                 while valor_string == '' or valor_string[0].isalpha():
-                    valor_string = str(input(f'{"Digite o valor ":.<35} '))
+                    valor_string = str(input(f'{"Digite o valor ":.<30} '))
 
                 valor_float = valor_string.replace(',','.')
                 valor = float(valor_float)
@@ -76,13 +76,13 @@ class Validacoes:
     def digitar_quantidade(self):
         while True:
             try:
-                valor_string = str(input(f'{"Digite a quantidade ":.<35} '))
+                valor_string = str(input(f'{"Digite a quantidade ":.<30} '))
             except (ValueError, TypeError):
                 print(f'{bgCor[1]}ERRO: Por favor, digite um valor real!{bgCor[0]}')
                 continue
             else:
                 while valor_string == '' or valor_string[0].isalpha():
-                    valor_string = str(input(f'{"Digite a quantidade ":.<35} '))
+                    valor_string = str(input(f'{"Digite a quantidade ":.<30} '))
 
                 valor_float = valor_string.replace(',','.')
                 valor = float(valor_float)
@@ -150,3 +150,4 @@ class Validacoes:
             return True
         else:
             return False
+

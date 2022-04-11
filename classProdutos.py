@@ -14,9 +14,9 @@ class Produtos:
         self.categoria = categoria
 
 
-    def ler_arquivo_produtos(self, nome):
+    def ler_arquivo_produtos(self, arquivo_csv):
         try:
-            arquivo = open(nome, 'r')
+            arquivo = open(arquivo_csv, 'r')
         except:
             print(f'\n{bgCor[1]}ERRO! Confira se o arquivo existe.{bgCor[0]}\n')
         else:
@@ -40,9 +40,9 @@ class Produtos:
             arquivo.close()
 
 
-    def cadastrar_produtos(self, nome):
+    def cadastrar_produtos(self, arquivo_csv):
         try:
-            arquivo = open(nome, 'a')
+            arquivo = open(arquivo_csv, 'a')
         except:
             print(f'\n{bgCor[1]}ERRO! Ocorreu um erro ao abrir o arquivo.{bgCor[0]}\n')
         else:
@@ -53,29 +53,36 @@ class Produtos:
                 id = int(Validacoes.gerar_id_sequencial(self, arquivo_produtos))
                 print()
 
-                desc = str(input(f'{"Digite a descrição ":.<25} ')).strip().upper()
+                desc = str(input(f'{"Digite a descrição ":.<30} ')).strip().upper()
                 while Validacoes.validar_campo_vazio(self, desc):
-                    desc = str(input(f'{"Digite a descrição ":.<25} ')).strip().upper()
+                    desc = str(input(f'{"Digite a descrição ":.<30} ')).strip().upper()
                     if Validacoes.validar_tamanho_campo(self, len(desc), tamanho_25):
                         print(f'\n{fontCor[1]}O campo Descrição deve conter no máximo {tamanho_25} caracteres\n{fontCor[0]}')
-                        desc = str(input(f'{"Digite a descrição ":.<25} ')).strip().upper()
+                        desc = str(input(f'{"Digite a descrição ":.<30} ')).strip().upper()
                 descricao = desc
                 
-                categoria = str(input(f'{"Digite a categoria ":.<25} ')).strip().upper()
+                categoria = str(input(f'{"Digite a categoria ":.<30} ')).strip().upper()
                 preco = Validacoes.digitar_numero_real(self)
 
                 tabela = [id, descricao, categoria, preco]
-                escritor.writerow(tabela)
+                preco_cadastro = Validacoes.formatar_valor_real(float(preco))
+                print(f'\n Descrição: {tabela[1]:>13}\n Categoria: {tabela[2]:>15}\n Preço R$ {preco_cadastro:>14}')
+
+                resposta = str(input(f'\nDeseja salvar os dados do novo produto? [S/N] '))
+                if resposta == 'S' or resposta == 's':
+                    escritor.writerow(tabela)
+                    print(f'\n{bgCor[2]}Cadastro efetuado com sucesso.{bgCor[0]}\n')
+                else:
+                    print(f'\n{bgCor[1]}Cadastro cancelado.{bgCor[0]}\n')
             except:
                 print(f'\n{bgCor[1]}ERRO! Ocorreu um erro ao incluir os dados.{bgCor[0]}\n')
             else:
-                print(f'\n{bgCor[2]}Cadastro efetuado com sucesso.{bgCor[0]}\n')
                 arquivo.close()
 
 
-    def buscar_produto(self, nome):
+    def buscar_produto(self, arquivo_csv):
         try:
-            arquivo = open(nome, 'r')
+            arquivo = open(arquivo_csv, 'r')
         except:
             print(f'\n{bgCor[1]}ERRO! Confira se o arquivo existe.{bgCor[0]}\n')
         else:
@@ -96,9 +103,9 @@ class Produtos:
             arquivo.close()
 
 
-    def buscar_produto_descricao(self, nome):
+    def buscar_produto_descricao(self, arquivo_csv):
         try:
-            arquivo = open(nome, 'r')
+            arquivo = open(arquivo_csv, 'r')
         except:
             print(f'\n{bgCor[1]}ERRO! Confira se o arquivo existe.{bgCor[0]}\n')
         else:
@@ -126,9 +133,9 @@ class Produtos:
             arquivo.close()
 
 
-    def buscar_produto_categoria(self, nome):
+    def buscar_produto_categoria(self, arquivo_csv):
         try:
-            arquivo = open(nome, 'r')
+            arquivo = open(arquivo_csv, 'r')
         except:
             print(f'\n{bgCor[1]}ERRO! Confira se o arquivo existe.{bgCor[0]}\n')
         else:
@@ -156,6 +163,37 @@ class Produtos:
             arquivo.close()
 
 
+    def deletar_produto(self, arquivo_csv):
+        try:
+            arquivo = open(arquivo_csv, 'r')
+        except:
+            print(f'\n{bgCor[1]}ERRO! Ocorreu um erro ao abrir o arquivo.{bgCor[0]}\n')
+        else:
+            try:
+                leitor = csv.reader(arquivo, delimiter=',', lineterminator='\n')
+            
+                lista = list(leitor)
+
+                for value in lista:
+                    id = '14'
+                    if value[0] == id:
+                        lista.remove(value)
+
+                Arquivo.deletar_arquivo(self, arquivo_produtos)
+                Arquivo.criar_arquivo(self, arquivo_produtos, 3)
+
+                arquivo = open(arquivo_csv, 'a')
+                escritor = csv.writer(arquivo, delimiter=',', lineterminator='\n')
+                for linha in lista[1:]:
+                    print(linha)
+                    escritor.writerow(linha)
+
+            except:
+                print(f'\n{bgCor[1]}ERRO! Ocorreu um erro ao incluir os dados.{bgCor[0]}\n')
+            else:
+                arquivo.close()
+
+
 '''
 self = 'self'
 Produtos.ler_arquivo_produtos(self, arquivo_produtos)
@@ -165,3 +203,6 @@ Produtos.buscar_produto_descricao(self, arquivo_produtos)
 Produtos.cadastrar_produtos(self, arquivo_produtos)
 Produtos.buscar_produto_categoria(self, arquivo_produtos)
 '''
+
+self = 'self'
+Produtos.deletar_produto(self, arquivo_produtos)

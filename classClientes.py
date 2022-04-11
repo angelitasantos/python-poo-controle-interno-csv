@@ -35,7 +35,7 @@ class Clientes:
                     print(f'{linha[0]:>14} {linha[1]:<35}{linha[2]:<30}{linha[3]:<5}{linha[4]:<15}')
                 print(Interface.incrementar_linha(self, tamanho, '~'))
             else:
-                print(f'\n{fontCor[1]}Não existe nenhum fornecedor cadastrado no sistema.\n{fontCor[0]}')
+                print(f'\n{fontCor[1]}Não existe nenhum cliente cadastrado no sistema.\n{fontCor[0]}')
         finally:
             arquivo.close()
 

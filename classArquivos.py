@@ -28,21 +28,49 @@ class Arquivo:
             return True
 
 
-    def criar_arquivo(self, arquivo_csv):
+    def criar_arquivo(self, arquivo_csv, opcao):
         try:
             arquivo = open(arquivo_csv, 'w')
             arquivo.close()
         except:
             print(f'\n{bgCor[1]}ERRO! Ocorreu um erro ao criar o arquivo.{bgCor[0]}\n')
         else:
-            print(f'{bgCor[2]}Arquivo criado com sucesso: {arquivo_csv}{bgCor[0]}\n')
+            if opcao == 1:
+                Arquivo.criar_arquivo_vendas(self)
+                print(f'{bgCor[2]}Arquivo criado com sucesso: {arquivo_vendas}{bgCor[0]}\n')
+            elif opcao == 2:
+                Arquivo.criar_arquivo_compras(self)
+                print(f'{bgCor[2]}Arquivo criado com sucesso: {arquivo_compras}{bgCor[0]}\n')
+            elif opcao == 3:
+                Arquivo.criar_arquivo_produtos(self)
+                print(f'{bgCor[2]}Arquivo criado com sucesso: {arquivo_produtos}{bgCor[0]}\n')
+            elif opcao == 4:
+                Arquivo.criar_arquivo_clientes(self)
+                print(f'{bgCor[2]}Arquivo criado com sucesso: {arquivo_clientes}{bgCor[0]}\n')
+            elif opcao == 5:
+                Arquivo.criar_arquivo_fornecedores(self)
+                print(f'{bgCor[2]}Arquivo criado com sucesso: {arquivo_fornecedores}{bgCor[0]}\n')
+            elif opcao == 6:
+                Arquivo.criar_arquivo_contas_receber(self)
+                print(f'{bgCor[2]}Arquivo criado com sucesso: {arquivo_receber}{bgCor[0]}\n')
+            elif opcao == 7:
+                Arquivo.criar_arquivo_contas_pagar(self)
+                print(f'{bgCor[2]}Arquivo criado com sucesso: {arquivo_pagar}{bgCor[0]}\n')
+            else:
+                print(f'\n{bgCor[1]}ERRO! Ocorreu um erro ao criar o arquivo.{bgCor[0]}\n')
 
+
+    def deletar_arquivo(self, arquivo):
+        import os 
+        if(os.path.exists(arquivo) and os.path.isfile(arquivo)): 
+            os.remove(arquivo) 
+            print('Arquivo deletado') 
+        else: 
+            print('Arquivo não deletado') 
+            
 
     def criar_arquivo_produtos(self):
-        arquivo = arquivo_produtos
-        Arquivo.criar_arquivo(self, arquivo)
-
-        arquivo = open(arquivo, 'a')
+        arquivo = open(arquivo_produtos, 'a')
         escritor = csv.writer(arquivo, delimiter=',', lineterminator='\n')
 
         id = 'ID'
@@ -55,10 +83,7 @@ class Arquivo:
         
 
     def criar_arquivo_clientes(self):
-        arquivo = 'tbclientes.csv'
-        Arquivo.criar_arquivo(self, arquivo)
-
-        arquivo = open(arquivo, 'a')
+        arquivo = open(arquivo_clientes, 'a')
         escritor = csv.writer(arquivo, delimiter=',', lineterminator='\n')
 
         id = 'ID'
@@ -72,10 +97,7 @@ class Arquivo:
 
 
     def criar_arquivo_fornecedores(self):
-        arquivo = 'tbfornecedores.csv'
-        Arquivo.criar_arquivo(self, arquivo)
-
-        arquivo = open(arquivo, 'a')
+        arquivo = open(arquivo_fornecedores, 'a')
         escritor = csv.writer(arquivo, delimiter=',', lineterminator='\n')
 
         id = 'ID'
@@ -89,10 +111,7 @@ class Arquivo:
 
 
     def criar_arquivo_vendas(self):
-        arquivo = 'tbvendas.csv'
-        Arquivo.criar_arquivo(self, arquivo)
-
-        arquivo = open(arquivo, 'a')
+        arquivo = open(arquivo_vendas, 'a')
         escritor = csv.writer(arquivo, delimiter=',', lineterminator='\n')
 
         numero = 'NUMERO'
@@ -115,10 +134,7 @@ class Arquivo:
         
 
     def criar_arquivo_compras(self):
-        arquivo = 'tbcompras.csv'
-        Arquivo.criar_arquivo(self, arquivo)
-
-        arquivo = open(arquivo, 'a')
+        arquivo = open(arquivo_compras, 'a')
         escritor = csv.writer(arquivo, delimiter=',', lineterminator='\n')
 
         numero = 'NUMERO'
@@ -141,10 +157,7 @@ class Arquivo:
 
 
     def criar_arquivo_contas_receber(self):
-        arquivo = 'tbreceber.csv'
-        Arquivo.criar_arquivo(self, arquivo)
-
-        arquivo = open(arquivo, 'a')
+        arquivo = open(arquivo_receber, 'a')
         escritor = csv.writer(arquivo, delimiter=',', lineterminator='\n')
 
         numero = 'NUMERO'
@@ -167,10 +180,7 @@ class Arquivo:
 
 
     def criar_arquivo_contas_pagar(self):
-        arquivo = 'tbpagar.csv'
-        Arquivo.criar_arquivo(self, arquivo)
-
-        arquivo = open(arquivo, 'a')
+        arquivo = open(arquivo_pagar, 'a')
         escritor = csv.writer(arquivo, delimiter=',', lineterminator='\n')
 
         numero = 'NUMERO'
@@ -190,3 +200,4 @@ class Arquivo:
         tabela = [  numero, cod_forn, fornecedor, cidade, estado, tipoforn, 
                     parcela, valor, vencimento, numparc, status]
         escritor.writerow(tabela)
+
